@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.common;
+package org.nickle.nprofiler.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

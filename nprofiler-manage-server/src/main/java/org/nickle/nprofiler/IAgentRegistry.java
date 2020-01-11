@@ -11,6 +11,6 @@ public interface IAgentRegistry {
 
     List<AgentInfo> getAllAgentInfo() throws Exception;
 
-    IAgentServerService getAgentService(String socketInfo) throws Exception;
+    IAgentServerService getAgentService(String id) throws Exception;
 
 }

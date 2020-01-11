@@ -2,7 +2,7 @@ package org.nickle.nprofiler.perf.service.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.nickle.nprofiler.common.NprofilerUtils;
+import org.nickle.nprofiler.utils.NprofilerUtils;
 import org.nickle.nprofiler.exception.NprofilerException;
 import org.nickle.nprofiler.bean.JmapHeapInfo;
 import org.nickle.nprofiler.perf.service.IJmapService;
