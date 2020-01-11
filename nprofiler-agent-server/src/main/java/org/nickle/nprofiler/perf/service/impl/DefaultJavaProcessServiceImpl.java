@@ -2,7 +2,7 @@ package org.nickle.nprofiler.perf.service.impl;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.nickle.nprofiler.perf.bean.JpsProcessInfo;
+import org.nickle.nprofiler.bean.JpsProcessInfo;
 import org.nickle.nprofiler.perf.service.IJavaProcessService;
 import sun.jvmstat.monitor.*;
 import sun.tools.jps.Arguments;
@@ -43,6 +43,7 @@ public class DefaultJavaProcessServiceImpl implements IJavaProcessService {
 
                 errorString = " -- main class information unavailable";
                 String mainClass = MonitoredVmUtil.mainClass(vm, arguments.showLongPaths());
+
                 jpsProcessInfo.setMainClass(mainClass);
 
                 errorString = " -- detach failed";

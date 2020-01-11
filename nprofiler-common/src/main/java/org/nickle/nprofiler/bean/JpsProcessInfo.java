@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.perf.bean;
+package org.nickle.nprofiler.bean;
 
 import lombok.Data;
 

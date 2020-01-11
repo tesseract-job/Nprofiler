@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.perf.bean;
+package org.nickle.nprofiler.bean;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class JmapHeapInfo {
     @NprofilerUtils.MapToObjIgnore
     private List<GcInfo> gcInfoList = Lists.newArrayList();
 
-    private HeapUsageInfo heapUsageInfo;
+    private HeapUsageInfo heapUsageInfo = new HeapUsageInfo();
 
     @Data
     public static class GcInfo {
@@ -35,5 +35,18 @@ public class JmapHeapInfo {
     @Data
     public static class HeapUsageInfo {
         private String name;
+        private List<GenInfo> genInfoList = Lists.newArrayList();
+    }
+
+    @Data
+    public static class GenInfo<T> {
+        private String name;
+        private List<T> genInfoValueList = Lists.newArrayList();
+    }
+
+    @Data
+    public static class GenInfoValue {
+        private String name;
+        private Double value;
     }
 }
