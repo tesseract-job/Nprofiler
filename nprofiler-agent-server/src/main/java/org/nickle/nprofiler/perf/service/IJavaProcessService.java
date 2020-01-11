@@ -1,6 +1,6 @@
 package org.nickle.nprofiler.perf.service;
 
-import org.nickle.nprofiler.perf.bean.JpsProcessInfo;
+import org.nickle.nprofiler.bean.JpsProcessInfo;
 
 import java.util.List;
 
