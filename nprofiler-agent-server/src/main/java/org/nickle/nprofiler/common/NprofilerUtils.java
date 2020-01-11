@@ -7,9 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 @Slf4j
@@ -18,29 +16,33 @@ public class NprofilerUtils {
         if (map == null || obj == null) {
             return;
         }
-        Set<Map.Entry> set = map.entrySet();
-        Iterator<Map.Entry> iterator = set.iterator();
         Class<?> aClass = obj.getClass();
         try {
-            while (iterator.hasNext()) {
-                Map.Entry entry = iterator.next();
-                Object key = entry.getKey();
-                if (key instanceof String) {
-                    String keyStr = (String) key;
-                    Field field = aClass.getDeclaredField(keyStr);
-                    if (field != null) {
-                        field.setAccessible(true);
-                        MapToObjIgnore annotation = field.getAnnotation(MapToObjIgnore.class);
-                        if (annotation != null) {
-                            Object value = entry.getValue();
-                            if (mapValueResolve != null) {
-                                value = mapValueResolve.apply(value);
-                            }
+            Field[] declaredFields = aClass.getDeclaredFields();
+            int length = declaredFields.length;
+            for (int i = 0; i < length; i++) {
+                Field field = declaredFields[i];
+                field.setAccessible(true);
+                MapToObjIgnore annotation = field.getAnnotation(MapToObjIgnore.class);
+                if (annotation != null) {
+                    continue;
+                }
+                String name = field.getName();
+                Object value = map.get(name);
+                if (value == null) {
+                    name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                    value = map.get(name);
+                    if (value != null) {
+                        if (mapValueResolve != null) {
+                            value = mapValueResolve.apply(value);
+                        }
+                        if (value != null) {
                             field.set(obj, value);
                         }
                     }
                 }
             }
+
         } catch (Exception e) {
             log.error(e.toString());
         }
