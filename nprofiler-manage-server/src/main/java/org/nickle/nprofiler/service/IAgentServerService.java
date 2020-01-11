@@ -1,4 +1,4 @@
-package org.nickle.nprofiler;
+package org.nickle.nprofiler.service;
 
 import feign.Param;
 import feign.RequestLine;
@@ -14,6 +14,6 @@ public interface IAgentServerService {
     @RequestLine("GET " + JMAP_HEAP_INFO_MAPPING)
     JmapHeapInfo getJmapHeapInfo(@Param("processId") String processId);
 
-    @RequestLine("POST " + JPS_PROCESS_INFO_MAPPING)
+    @RequestLine("GET " + JPS_PROCESS_INFO_MAPPING)
     List<JpsProcessInfo> getJpsProcessInfo();
 }

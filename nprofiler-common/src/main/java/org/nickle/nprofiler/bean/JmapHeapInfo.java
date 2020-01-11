@@ -2,7 +2,7 @@ package org.nickle.nprofiler.bean;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
-import org.nickle.nprofiler.common.NprofilerUtils;
+import org.nickle.nprofiler.utils.NprofilerUtils;
 
 import java.util.List;
 

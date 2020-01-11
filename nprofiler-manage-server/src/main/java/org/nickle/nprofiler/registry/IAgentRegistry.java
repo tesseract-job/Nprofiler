@@ -1,15 +1,16 @@
-package org.nickle.nprofiler;
+package org.nickle.nprofiler.registry;
 
 import org.nickle.nprofiler.bean.AgentInfo;
+import org.nickle.nprofiler.service.IAgentServerService;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface IAgentRegistry {
     void regist(AgentInfo agentInfo) throws Exception;
 
     void delete(String socketInfo) throws Exception;
 
-    List<AgentInfo> getAllAgentInfo() throws Exception;
+    Collection<AgentInfo> getAllAgentInfo() throws Exception;
 
     IAgentServerService getAgentService(String id) throws Exception;
 
