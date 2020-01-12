@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,7 +48,8 @@ public class ManageController {
     }
 
     @PutMapping(AGENT_HEART_BEAT_MAPPING)
-    public CommonResponse hearbeat(@RequestBody @NotBlank String socketInfo) throws Exception {
+    public CommonResponse hearbeat(@RequestBody @NotNull AgentInfo agentInfo) throws Exception {
+        iAgentRegistry.checkAgentInfo(agentInfo);
         return CommonResponse.SUCCESS;
     }
 

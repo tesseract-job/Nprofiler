@@ -28,7 +28,7 @@ public class SpringConfig {
     @Bean
     public IRegistryClient registryClient() {
         DefaultHttpRegistryClient defaultHttpRegistryClient = new DefaultHttpRegistryClient();
-        defaultHttpRegistryClient.init(remoteServerURL);
+        defaultHttpRegistryClient.init(remoteServerURL, null);
         return defaultHttpRegistryClient;
     }
 

@@ -2,10 +2,10 @@ package org.nickle.nprofiler.perf.service.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.nickle.nprofiler.utils.NprofilerUtils;
-import org.nickle.nprofiler.exception.NprofilerException;
 import org.nickle.nprofiler.bean.JmapHeapInfo;
+import org.nickle.nprofiler.exception.NprofilerException;
 import org.nickle.nprofiler.perf.service.IJmapService;
+import org.nickle.nprofiler.utils.NprofilerUtils;
 import sun.jvm.hotspot.gc_implementation.g1.G1CollectedHeap;
 import sun.jvm.hotspot.gc_implementation.parallelScavenge.PSOldGen;
 import sun.jvm.hotspot.gc_implementation.parallelScavenge.PSYoungGen;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class DefaultJmapServiceImpl implements IJmapService {
+public class DefaultJmapServiceImpl  implements IJmapService {
     private static final double FACTOR = 1024 * 1024;
 
     @Override

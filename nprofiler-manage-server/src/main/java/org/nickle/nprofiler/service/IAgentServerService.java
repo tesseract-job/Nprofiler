@@ -11,7 +11,7 @@ import static org.nickle.nprofiler.constant.CommonConstant.*;
 
 public interface IAgentServerService {
 
-    @RequestLine("GET " + JMAP_HEAP_INFO_MAPPING)
+    @RequestLine("GET " + JMAP_HEAP_INFO_MAPPING+"/{processId}")
     JmapHeapInfo getJmapHeapInfo(@Param("processId") String processId);
 
     @RequestLine("GET " + JPS_PROCESS_INFO_MAPPING)

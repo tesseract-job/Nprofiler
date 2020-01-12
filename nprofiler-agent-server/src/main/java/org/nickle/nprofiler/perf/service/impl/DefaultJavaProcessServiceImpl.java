@@ -3,7 +3,9 @@ package org.nickle.nprofiler.perf.service.impl;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.bean.JpsProcessInfo;
+import org.nickle.nprofiler.perf.service.AbstractValidatorService;
 import org.nickle.nprofiler.perf.service.IJavaProcessService;
+import org.nickle.nprofiler.perf.validator.DefaultJpsProcessInfoValidator;
 import sun.jvmstat.monitor.*;
 import sun.tools.jps.Arguments;
 
@@ -11,8 +13,13 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-public class DefaultJavaProcessServiceImpl implements IJavaProcessService {
+public class DefaultJavaProcessServiceImpl extends AbstractValidatorService<JpsProcessInfo> implements IJavaProcessService {
     private final String[] DEFAULT_CMD = {"-l"};
+
+    public DefaultJavaProcessServiceImpl() {
+        //放入默认校验器
+        this.addValidator(new DefaultJpsProcessInfoValidator());
+    }
 
     @Override
     public List<JpsProcessInfo> getAllJavaProcess() throws Exception {
@@ -56,7 +63,9 @@ public class DefaultJavaProcessServiceImpl implements IJavaProcessService {
                 if (errorString != null) {
                     jpsProcessInfo.setDescription(errorString);
                 }
-                processInfoList.add(jpsProcessInfo);
+                if (this.fireValidator(jpsProcessInfo)) {
+                    processInfoList.add(jpsProcessInfo);
+                }
             }
         }
         return processInfoList;

@@ -7,7 +7,6 @@ import org.nickle.nprofiler.exception.NprofilerException;
 @Data
 @Slf4j
 public class RegistThread extends Thread {
-    private String socketInfo;
     private IRegistryClient registryClient;
     private boolean isRegist;
 
@@ -28,7 +27,7 @@ public class RegistThread extends Thread {
             if (!isRegist) {
                 try {
                     log.info("开始注册");
-                    if (registryClient.regist(socketInfo)) {
+                    if (registryClient.regist()) {
                         isRegist = true;
                         log.info("注册成功");
                     }
@@ -40,7 +39,7 @@ public class RegistThread extends Thread {
 
             try {
                 log.info("开始心跳");
-                if (registryClient.heartBeat(socketInfo)) {
+                if (registryClient.heartBeat()) {
                     log.info("心跳成功");
                 } else {
                     isRegist = false;

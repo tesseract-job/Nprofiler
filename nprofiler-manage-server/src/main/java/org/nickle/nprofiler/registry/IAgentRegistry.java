@@ -14,4 +14,5 @@ public interface IAgentRegistry {
 
     IAgentServerService getAgentService(String id) throws Exception;
 
+    void checkAgentInfo(AgentInfo agentInfo) throws Exception;
 }

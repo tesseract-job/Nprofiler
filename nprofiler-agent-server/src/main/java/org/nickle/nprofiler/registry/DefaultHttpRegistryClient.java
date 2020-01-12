@@ -16,18 +16,16 @@ import static org.nickle.nprofiler.constant.CommonConstant.AGENT_REGIST_MAPPING;
 @Slf4j
 public class DefaultHttpRegistryClient implements IRegistryClient {
     private RemoteService remoteService;
+    private AgentInfo agentInfo;
+
+    public DefaultHttpRegistryClient() {
+    }
 
     @Override
-    public boolean regist(String socketInfo) throws Exception {
+    public boolean regist() throws Exception {
         validate();
-        if (socketInfo == null) {
-            socketInfo = getDefaultSocketInfo();
-        }
-        AgentInfo agentInfo = new AgentInfo();
-        agentInfo.setDescription("test");
-        agentInfo.setName("测试");
-        agentInfo.setSocketInfo(socketInfo);
         CommonResponse commonResponse = remoteService.regist(agentInfo);
+        log.info(commonResponse.toString());
         if (commonResponse.getCode().equals(CommonResponse.SUCCESS_CODE)) {
             return true;
         }
@@ -35,12 +33,10 @@ public class DefaultHttpRegistryClient implements IRegistryClient {
     }
 
     @Override
-    public boolean heartBeat(String socketInfo) throws Exception {
+    public boolean heartBeat() throws Exception {
         validate();
-        if (socketInfo == null) {
-            socketInfo = getDefaultSocketInfo();
-        }
-        CommonResponse commonResponse = remoteService.heartBeat(socketInfo);
+        CommonResponse commonResponse = remoteService.heartBeat(agentInfo);
+        log.info(commonResponse.toString());
         if (commonResponse.getCode().equals(CommonResponse.SUCCESS_CODE)) {
             return true;
         }
@@ -51,18 +47,29 @@ public class DefaultHttpRegistryClient implements IRegistryClient {
         return "http://localhost:9001";
     }
 
-    public void init(String remoteServerUrl) {
+    public void init(String remoteServerUrl, String socketInfo) {
         Request.Options options = new Request.Options(3, TimeUnit.SECONDS, 3, TimeUnit.SECONDS, true);
         remoteService = Feign.builder()
                 .encoder(new GsonEncoder())
                 .decoder(new GsonDecoder())
                 .options(options)
+                .retryer(Retryer.NEVER_RETRY)
                 .target(RemoteService.class, remoteServerUrl);
+        if (socketInfo == null) {
+            socketInfo = getDefaultSocketInfo();
+        }
+        agentInfo = new AgentInfo();
+        agentInfo.setDescription("test");
+        agentInfo.setName("测试");
+        agentInfo.setSocketInfo(socketInfo);
     }
 
     private void validate() {
         if (remoteService == null) {
             throw new NprofilerException("DefaultHttpRegistryClient 没有初始化");
+        }
+        if (agentInfo == null) {
+            throw new NprofilerException("AgentInfo 没有初始化");
         }
     }
 
@@ -72,7 +79,8 @@ public class DefaultHttpRegistryClient implements IRegistryClient {
         CommonResponse regist(AgentInfo agentInfo);
 
         @RequestLine("PUT " + AGENT_HEART_BEAT_MAPPING)
-        CommonResponse heartBeat(@Param("socketInfo") String socketInfo);
+        @Headers("Content-Type: application/json")
+        CommonResponse heartBeat(AgentInfo agentInfo);
 
     }
 
