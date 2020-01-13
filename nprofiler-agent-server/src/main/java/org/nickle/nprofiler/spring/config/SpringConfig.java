@@ -1,8 +1,10 @@
 package org.nickle.nprofiler.spring.config;
 
 import org.nickle.nprofiler.perf.service.IJavaProcessService;
+import org.nickle.nprofiler.perf.service.IJinfoService;
 import org.nickle.nprofiler.perf.service.IJmapService;
 import org.nickle.nprofiler.perf.service.impl.DefaultJavaProcessServiceImpl;
+import org.nickle.nprofiler.perf.service.impl.DefaultJinfoServiceImpl;
 import org.nickle.nprofiler.perf.service.impl.DefaultJmapServiceImpl;
 import org.nickle.nprofiler.registry.DefaultHttpRegistryClient;
 import org.nickle.nprofiler.registry.IRegistryClient;
@@ -23,6 +25,11 @@ public class SpringConfig {
     @Bean
     public IJmapService jmapService() {
         return new DefaultJmapServiceImpl();
+    }
+
+    @Bean
+    public IJinfoService jinfoService(){
+        return new DefaultJinfoServiceImpl();
     }
 
     @Bean

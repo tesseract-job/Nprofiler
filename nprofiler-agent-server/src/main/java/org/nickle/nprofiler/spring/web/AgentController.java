@@ -1,8 +1,10 @@
 package org.nickle.nprofiler.spring.web;
 
+import org.nickle.nprofiler.bean.JinfoConfiguration;
 import org.nickle.nprofiler.bean.JmapHeapInfo;
 import org.nickle.nprofiler.bean.JpsProcessInfo;
 import org.nickle.nprofiler.perf.service.IJavaProcessService;
+import org.nickle.nprofiler.perf.service.IJinfoService;
 import org.nickle.nprofiler.perf.service.IJmapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -13,8 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static org.nickle.nprofiler.constant.CommonConstant.JMAP_HEAP_INFO_MAPPING;
-import static org.nickle.nprofiler.constant.CommonConstant.JPS_PROCESS_INFO_MAPPING;
+import static org.nickle.nprofiler.constant.CommonConstant.*;
 
 @RestController
 @Validated
@@ -24,13 +25,28 @@ public class AgentController {
     @Autowired
     private IJavaProcessService javaProcessService;
 
+    @Autowired
+    private IJinfoService jinfoService;
+
     @GetMapping(JMAP_HEAP_INFO_MAPPING + "/{processId}")
     public JmapHeapInfo getJmapHeapInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
         return jmapService.getProcessHeapSummary(processId);
+    }
+
+    @GetMapping(JMAP_HEAP_INFO_MAPPING + "/{processId}")
+    public JmapHeapInfo getJInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
+        return null;
     }
 
     @GetMapping(JPS_PROCESS_INFO_MAPPING)
     public List<JpsProcessInfo> getJpsProcessInfo() throws Exception {
         return javaProcessService.getAllJavaProcess();
     }
+
+    @GetMapping(JINFO_CONFIGURATION_MAPPING + "/{processId}")
+    public JinfoConfiguration getJinfoConfiguration(@PathVariable("processId") @NotNull Integer processId) throws Exception {
+        return jinfoService.getInfoConfiguration(processId);
+    }
+
+
 }
