@@ -14,7 +14,6 @@
     <packaging>pom</packaging>
     <version>1.0.0</version>
     <modules>
-        <module>nprofiler-regist-server</module>
         <module>nprofiler-manage-server</module>
         <module>nprofiler-agent-server</module>
         <module>nprofiler-common</module>
