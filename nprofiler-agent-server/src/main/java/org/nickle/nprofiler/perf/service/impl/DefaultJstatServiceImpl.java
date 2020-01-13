@@ -2,6 +2,7 @@ package org.nickle.nprofiler.perf.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.bean.JstatGCInfo;
+import org.nickle.nprofiler.exception.NprofilerException;
 import org.nickle.nprofiler.perf.service.IJstatService;
 import sun.jvmstat.monitor.*;
 import sun.jvmstat.monitor.event.HostEvent;
@@ -25,13 +26,13 @@ public class DefaultJstatServiceImpl implements IJstatService {
     public JstatGCInfo getGCSummary(int processId) throws Exception {
         JstatGCInfo gcInfo = run(new String[]{"-gc", String.valueOf(processId)});
         if (gcInfo == null){
-            throw new NullPointerException();
+            throw new NprofilerException("JstatGCInfo获取为空");
         }else {
             try {
                 return gcInfo;
             } catch (ClassFormatError e) {
                 log.error(e.toString());
-                throw new NullPointerException();
+                throw new NprofilerException("JstatGCInfo获取为空");
             }
         }
     }
@@ -83,6 +84,7 @@ public class DefaultJstatServiceImpl implements IJstatService {
         });
         // handle target termination events for targets other than ourself
         HostListener terminator = new HostListener() {
+            @Override
             public void vmStatusChanged(VmStatusChangeEvent ev) {
                 Integer lvmid = new Integer(vmId.getLocalVmId());
                 if (ev.getTerminated().contains(lvmid)) {
@@ -91,6 +93,7 @@ public class DefaultJstatServiceImpl implements IJstatService {
                     jstatTool.stopLogging();
                 }
             }
+            @Override
             public void disconnected(HostEvent ev) {
                 if (monitoredHost == ev.getMonitoredHost()) {
                     jstatTool.stopLogging();
