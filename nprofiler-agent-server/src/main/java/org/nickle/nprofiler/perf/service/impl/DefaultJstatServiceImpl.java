@@ -157,8 +157,11 @@ public class DefaultJstatServiceImpl implements IJstatService {
                 if (sampleCount > 0 && ++iterationCount >= sampleCount) {
                     break;
                 }
-
-                try { Thread.sleep(sampleInterval); } catch (Exception e) { log.error(e.getMessage());}
+                try {
+                    Thread.sleep(sampleInterval);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
             }
         }
 
