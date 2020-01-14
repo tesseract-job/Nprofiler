@@ -14,13 +14,17 @@
     <packaging>pom</packaging>
     <version>1.0.0</version>
     <modules>
-        <module>nprofiler-regist-server</module>
         <module>nprofiler-manage-server</module>
         <module>nprofiler-agent-server</module>
         <module>nprofiler-common</module>
     </modules>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>1.9.5</version>
+            </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
