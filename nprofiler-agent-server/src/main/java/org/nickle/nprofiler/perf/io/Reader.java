@@ -14,22 +14,19 @@ import java.io.IOException;
  * @create 2020-01-14
  */
 @Slf4j
-public class Reader {
+public abstract class Reader {
 
-    private PositionDataInputStream in;
+    protected PositionDataInputStream in;
 
-    public Reader(PositionDataInputStream in) {
+    protected Reader(PositionDataInputStream in) {
         this.in = in;
     }
 
+    abstract public Snapshot read() throws IOException;
 
-    /**
-     * Read a snapshot from a file.
-     *
-     * @param heapFile The name of a file containing a heap dump
-     * @param callStack If true, read the call stack of allocaation sites
-     */
-    public static Snapshot readFile(String heapFile)throws IOException {
+    public static Snapshot readFile(String heapFile, boolean callStack,
+                                    int debugLevel)
+            throws IOException {
         int dumpNumber = 1;
         int pos = heapFile.lastIndexOf('#');
         if (pos > -1) {
@@ -41,7 +38,6 @@ public class Reader {
                         + "\", a dump number was "
                         + "expected after the :, but \""
                         + num + "\" was found instead.";
-                log.error(msg);
                 throw new NprofilerException(msg);
             }
             heapFile = heapFile.substring(0, pos);
@@ -51,7 +47,9 @@ public class Reader {
         try {
             int i = in.readInt();
             if (i == HprofReader.MAGIC_NUMBER) {
-                HprofReader r = new HprofReader(heapFile, in, dumpNumber);
+                Reader r
+                        = new HprofReader(heapFile, in, dumpNumber,
+                        callStack, debugLevel);
                 return r.read();
             } else {
                 throw new NprofilerException("Unrecognized magic number: " + i);
@@ -60,5 +58,5 @@ public class Reader {
             in.close();
         }
     }
-
 }
+

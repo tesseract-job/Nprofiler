@@ -1,13 +1,14 @@
 package org.nickle.nprofiler.perf.io;
 
 import com.sun.tools.hat.internal.model.*;
-import com.sun.tools.hat.internal.parser.*;
+import com.sun.tools.hat.internal.parser.PositionDataInputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.exception.NprofilerException;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Date;
 import java.util.Hashtable;
 
 ;
@@ -17,13 +18,17 @@ import java.util.Hashtable;
  * @create 2020-01-14
  */
 @Slf4j
-public class HprofReader implements ArrayTypeCodes {
+public class HprofReader extends Reader implements ArrayTypeCodes {
 
-    private static final int VERSION_JDK12BETA3 = 0;
-    private static final int VERSION_JDK12BETA4 = 1;
-    private static final int VERSION_JDK6       = 2;
-    private static final int T_CLASS = 2;
-    static final int MAGIC_NUMBER = 0x4a415641;
+    final static int MAGIC_NUMBER = 0x4a415641;
+    private final static String[] VERSIONS = {
+            " PROFILE 1.0\0",
+            " PROFILE 1.0.1\0",
+            " PROFILE 1.0.2\0",
+    };
+    private final static int VERSION_JDK12BETA3 = 0;
+    private final static int VERSION_JDK12BETA4 = 1;
+    private final static int VERSION_JDK6       = 2;
     static final int HPROF_UTF8          = 0x01;
     static final int HPROF_LOAD_CLASS    = 0x02;
     static final int HPROF_UNLOAD_CLASS  = 0x03;
@@ -53,37 +58,42 @@ public class HprofReader implements ArrayTypeCodes {
     static final int HPROF_GC_PRIM_ARRAY_DUMP         = 0x23;
     static final int HPROF_HEAP_DUMP_SEGMENT     = 0x1c;
     static final int HPROF_HEAP_DUMP_END         = 0x2c;
-    private PositionDataInputStream in;
-    private long currPos;
-    private int identifierSize;
-    private Snapshot snapshot;
+    private final static int T_CLASS = 2;
     private int version;
+    private int debugLevel;
+    private long currPos;
     private int dumpsToSkip;
+    private boolean callStack;
+    private int identifierSize;
     private Hashtable<Long, String> names;
     private Hashtable<Integer, ThreadObject> threadObjects;
     private Hashtable<Long, String> classNameFromObjectID;
     private Hashtable<Integer, String> classNameFromSerialNo;
     private Hashtable<Long, StackFrame> stackFrames;
     private Hashtable<Integer, StackTrace> stackTraces;
-
+    private Snapshot snapshot;
     public HprofReader(String fileName, PositionDataInputStream in,
-                       int dumpNumber)
+                       int dumpNumber, boolean callStack, int debugLevel)
             throws IOException {
-        this.in = in;
+        super(in);
         RandomAccessFile file = new RandomAccessFile(fileName, "r");
         this.snapshot = new Snapshot(MappedReadBuffer.create(file));
         this.dumpsToSkip = dumpNumber - 1;
-        names = new Hashtable();
+        this.callStack = callStack;
+        this.debugLevel = debugLevel;
+        names = new Hashtable<>();
         threadObjects = new Hashtable<>(43);
         classNameFromObjectID = new Hashtable<>();
-        stackFrames = new Hashtable(43);
-        stackTraces = new Hashtable(43);
-        classNameFromSerialNo = new Hashtable();
+        if (callStack) {
+            stackFrames = new Hashtable<>(43);
+            stackTraces = new Hashtable<>(43);
+            classNameFromSerialNo = new Hashtable<>();
+        }
     }
-
 
     public Snapshot read() throws IOException {
         currPos = 4;
+        version = readVersionHeader();
         identifierSize = in.readInt();
         snapshot.setIdentifierSize(identifierSize);
         if (version >= VERSION_JDK12BETA4) {
@@ -91,10 +101,12 @@ public class HprofReader implements ArrayTypeCodes {
         } else {
             snapshot.setNewStyleArrayClass(false);
         }
+
         currPos += 4;
         if (identifierSize != 4 && identifierSize != 8) {
-            throw new NprofilerException("can't deal with an identifier size of " + identifierSize + ".only deal with 4 or 8.");
+            throw new NprofilerException("I'm sorry, but I can't deal with an identifier size of " + identifierSize + ".  I can only deal with 4 or 8.");
         }
+        log.info("Dump file created " + (new Date(in.readLong())));
         currPos += 8;
         for (;;) {
             int type;
@@ -103,10 +115,15 @@ public class HprofReader implements ArrayTypeCodes {
             } catch (EOFException ignored) {
                 break;
             }
-            in.readInt();
+            in.readInt();     
             long length = in.readInt() & 0xffffffffL;
+            if (debugLevel > 0) {
+                log.info("Read record type " + type
+                        + ", length " + length
+                        + " at position " + toHex(currPos));
+            }
             if (length < 0) {
-                throw new NprofilerException("Bad record length of " + length
+                throw new IOException("Bad record length of " + length
                         + " at byte " + toHex(currPos+5)
                         + " of file.");
             }
@@ -120,7 +137,7 @@ public class HprofReader implements ArrayTypeCodes {
                     break;
                 }
                 case HPROF_LOAD_CLASS: {
-                    int serialNo = in.readInt();
+                    int serialNo = in.readInt();     
                     long classID = readID();
                     int stackTraceSerialNo = in.readInt();
                     long classNameID = readID();
@@ -132,12 +149,16 @@ public class HprofReader implements ArrayTypeCodes {
                     }
                     break;
                 }
+
                 case HPROF_HEAP_DUMP: {
                     if (dumpsToSkip <= 0) {
                         try {
                             readHeapDump(length, currPos);
                         } catch (EOFException exp) {
                             handleEOF(exp, snapshot);
+                        }
+                        if (debugLevel > 0) {
+                            log.info("    Finished processing instances in heap dump.");
                         }
                         return snapshot;
                     } else {
@@ -150,7 +171,7 @@ public class HprofReader implements ArrayTypeCodes {
                 case HPROF_HEAP_DUMP_END: {
                     if (version >= VERSION_JDK6) {
                         if (dumpsToSkip <= 0) {
-                            skipBytes(length);
+                            skipBytes(length);  
                             return snapshot;
                         } else {
                             dumpsToSkip--;
@@ -231,6 +252,7 @@ public class HprofReader implements ArrayTypeCodes {
                 case HPROF_LOCKSTATS_WAIT_TIME:
                 case HPROF_LOCKSTATS_HOLD_TIME:
                 {
+                    // Ignore these record types
                     skipBytes(length);
                     break;
                 }
@@ -244,10 +266,51 @@ public class HprofReader implements ArrayTypeCodes {
         return snapshot;
     }
 
+    private void skipBytes(long length) throws IOException {
+        while (length > 0) {
+            long skipped = in.skip(length);
+            length -= skipped;
+            if (skipped == 0) {
+                // EOF or other problem, throw exception
+                throw new NprofilerException("Couldn't skip enough bytes");
+            }
+        }
+    }
+
+    private int readVersionHeader() throws IOException {
+        int candidatesLeft = VERSIONS.length;
+        boolean[] matched = new boolean[VERSIONS.length];
+        for (int i = 0; i < candidatesLeft; i++) {
+            matched[i] = true;
+        }
+
+        int pos = 0;
+        while (candidatesLeft > 0) {
+            char c = (char) in.readByte();
+            currPos++;
+            for (int i = 0; i < VERSIONS.length; i++) {
+                if (matched[i]) {
+                    if (c != VERSIONS[i].charAt(pos)) {
+                        matched[i] = false;
+                        --candidatesLeft;
+                    } else if (pos == VERSIONS[i].length() - 1) {
+                        return i;
+                    }
+                }
+            }
+            ++pos;
+        }
+        throw new NprofilerException("Version string not recognized at byte " + (pos+3));
+    }
 
     private void readHeapDump(long bytesLeft, long posAtEnd) throws IOException {
         while (bytesLeft > 0) {
             int type = in.readUnsignedByte();
+            if (debugLevel > 0) {
+                log.info("    Read heap sub-record type " + type
+                        + " at position "
+                        + toHex(posAtEnd - bytesLeft));
+            }
             bytesLeft--;
             switch(type) {
                 case HPROF_GC_ROOT_UNKNOWN: {
@@ -361,13 +424,9 @@ public class HprofReader implements ArrayTypeCodes {
             log.warn("Error reading heap dump or heap dump segment:  Byte count is " + bytesLeft + " instead of 0");
             skipBytes(bytesLeft);
         }
-
-    }
-
-    private void handleEOF(EOFException exp, Snapshot snapshot) {
-        log.warn("Unexpected EOF. Will miss information...");
-        // we have EOF, we have to tolerate missing references
-        snapshot.setUnresolvedObjectsOK(true);
+        if (debugLevel > 0) {
+            log.info("    Finished heap sub-records.");
+        }
     }
 
     private long readID() throws IOException {
@@ -375,84 +434,11 @@ public class HprofReader implements ArrayTypeCodes {
                 (Snapshot.SMALL_ID_MASK & (long)in.readInt()) : in.readLong();
     }
 
-    private String toHex(long addr) {
-        return com.sun.tools.hat.internal.util.Misc.toHex(addr);
-    }
-
-    private void skipBytes(long length) throws IOException {
-        while (length > 0) {
-            long skipped = in.skip(length);
-            length -= skipped;
-            if (skipped == 0) {
-                throw new NprofilerException("Couldn't skip enough bytes");
-            }
-        }
-    }
-
-    private int readClass() throws IOException {
-        long id = readID();
-        StackTrace stackTrace = getStackTraceFromSerial(in.readInt());
-        long superId = readID();
-        long classLoaderId = readID();
-        long signersId = readID();
-        long protDomainId = readID();
-        long reserved1 = readID();
-        long reserved2 = readID();
-        int instanceSize = in.readInt();
-        int bytesRead = 7 * identifierSize + 8;
-        int numConstPoolEntries = in.readUnsignedShort();
-        bytesRead += 2;
-        for (int i = 0; i < numConstPoolEntries; i++) {
-            int index = in.readUnsignedShort();
-            bytesRead += 2;
-            bytesRead += readValue(null);
-        }
-        int numStatics = in.readUnsignedShort();
-        bytesRead += 2;
-        JavaThing[] valueBin = new JavaThing[1];
-        JavaStatic[] statics = new JavaStatic[numStatics];
-        for (int i = 0; i < numStatics; i++) {
-            long nameId = readID();
-            bytesRead += identifierSize;
-            byte type = in.readByte();
-            bytesRead++;
-            bytesRead += readValueForType(type, valueBin);
-            String fieldName = getNameFromID(nameId);
-            if (version >= VERSION_JDK12BETA4) {
-                type = signatureFromTypeId(type);
-            }
-            String signature = "" + ((char) type);
-            JavaField f = new JavaField(fieldName, signature);
-            statics[i] = new JavaStatic(f, valueBin[0]);
-        }
-        int numFields = in.readUnsignedShort();
-        bytesRead += 2;
-        JavaField[] fields = new JavaField[numFields];
-        for (int i = 0; i < numFields; i++) {
-            long nameId = readID();
-            bytesRead += identifierSize;
-            byte type = in.readByte();
-            bytesRead++;
-            String fieldName = getNameFromID(nameId);
-            if (version >= VERSION_JDK12BETA4) {
-                type = signatureFromTypeId(type);
-            }
-            String signature = "" + ((char) type);
-            fields[i] = new JavaField(fieldName, signature);
-        }
-        String name = classNameFromObjectID.get(new Long(id));
-        if (name == null) {
-            log.warn("Class name not found for " + toHex(id));
-            name = "unknown-name@" + toHex(id);
-        }
-        JavaClass c = new JavaClass(id, name, superId, classLoaderId, signersId,
-                protDomainId, fields, statics,
-                instanceSize);
-        snapshot.addClass(id, c);
-        snapshot.setSiteTrace(c, stackTrace);
-        return bytesRead;
-    }
-
+    //
+    // Read a java value.  If result is non-null, it's expected to be an
+    // array of one element.  We use it to fake multiple return values.
+    // @returns the number of bytes read
+    //
     private int readValue(JavaThing[] resultArr) throws IOException {
         byte type = in.readByte();
         return 1 + readValueForType(type, resultArr);
@@ -542,6 +528,119 @@ public class HprofReader implements ArrayTypeCodes {
         }
     }
 
+    private ThreadObject getThreadObjectFromSequence(int threadSeq)
+            throws IOException {
+        ThreadObject to = threadObjects.get(new Integer(threadSeq));
+        if (to == null) {
+            throw new NprofilerException("Thread " + threadSeq +
+                    " not found for JNI local ref");
+        }
+        return to;
+    }
+
+    private String getNameFromID(long id) throws IOException {
+        return getNameFromID(new Long(id));
+    }
+
+    private String getNameFromID(Long id) throws IOException {
+        if (id.longValue() == 0L) {
+            return "";
+        }
+        String result = names.get(id);
+        if (result == null) {
+            log.warn("Name not found at " + toHex(id.longValue()));
+            return "unresolved name " + toHex(id.longValue());
+        }
+        return result;
+    }
+
+    private StackTrace getStackTraceFromSerial(int ser) throws IOException {
+        if (stackTraces == null) {
+            return null;
+        }
+        StackTrace result = stackTraces.get(new Integer(ser));
+        if (result == null) {
+            log.warn("Stack trace not found for serial # " + ser);
+        }
+        return result;
+    }
+
+    //
+    // Handle a HPROF_GC_CLASS_DUMP
+    // Return number of bytes read
+    //
+    private int readClass() throws IOException {
+        long id = readID();
+        StackTrace stackTrace = getStackTraceFromSerial(in.readInt());
+        long superId = readID();
+        long classLoaderId = readID();
+        long signersId = readID();
+        long protDomainId = readID();
+        long reserved1 = readID();
+        long reserved2 = readID();
+        int instanceSize = in.readInt();
+        int bytesRead = 7 * identifierSize + 8;
+
+        int numConstPoolEntries = in.readUnsignedShort();
+        bytesRead += 2;
+        for (int i = 0; i < numConstPoolEntries; i++) {
+            int index = in.readUnsignedShort();
+            bytesRead += 2;
+            bytesRead += readValue(null);
+        }
+
+        int numStatics = in.readUnsignedShort();
+        bytesRead += 2;
+        JavaThing[] valueBin = new JavaThing[1];
+        JavaStatic[] statics = new JavaStatic[numStatics];
+        for (int i = 0; i < numStatics; i++) {
+            long nameId = readID();
+            bytesRead += identifierSize;
+            byte type = in.readByte();
+            bytesRead++;
+            bytesRead += readValueForType(type, valueBin);
+            String fieldName = getNameFromID(nameId);
+            if (version >= VERSION_JDK12BETA4) {
+                type = signatureFromTypeId(type);
+            }
+            String signature = "" + ((char) type);
+            JavaField f = new JavaField(fieldName, signature);
+            statics[i] = new JavaStatic(f, valueBin[0]);
+        }
+
+        int numFields = in.readUnsignedShort();
+        bytesRead += 2;
+        JavaField[] fields = new JavaField[numFields];
+        for (int i = 0; i < numFields; i++) {
+            long nameId = readID();
+            bytesRead += identifierSize;
+            byte type = in.readByte();
+            bytesRead++;
+            String fieldName = getNameFromID(nameId);
+            if (version >= VERSION_JDK12BETA4) {
+                type = signatureFromTypeId(type);
+            }
+            String signature = "" + ((char) type);
+            fields[i] = new JavaField(fieldName, signature);
+        }
+        String name = classNameFromObjectID.get(new Long(id));
+        if (name == null) {
+            log.warn("Class name not found for " + toHex(id));
+            name = "unknown-name@" + toHex(id);
+        }
+        JavaClass c = new JavaClass(id, name, superId, classLoaderId, signersId,
+                protDomainId, fields, statics,
+                instanceSize);
+        snapshot.addClass(id, c);
+        snapshot.setSiteTrace(c, stackTrace);
+
+        return bytesRead;
+    }
+
+    private String toHex(long addr) {
+        return com.sun.tools.hat.internal.util.Misc.toHex(addr);
+    }
+
     //
     // Handle a HPROF_GC_INSTANCE_DUMP
     // Return number of bytes read
@@ -624,8 +723,6 @@ public class HprofReader implements ArrayTypeCodes {
                     elSize = 8;
                     break;
                 }
-                default:
-                    break;
             }
             if (version >= VERSION_JDK12BETA4 && primitiveSignature == 0x00) {
                 throw new NprofilerException("Unrecognized typecode:  "
@@ -685,40 +782,22 @@ public class HprofReader implements ArrayTypeCodes {
         }
     }
 
-
-    private String getNameFromID(Long id) throws IOException {
-        if (id.longValue() == 0L) {
-            return "";
+    private void handleEOF(EOFException exp, Snapshot snapshot) {
+        if (debugLevel > 0) {
+            exp.printStackTrace();
         }
-        String result = names.get(id);
-        if (result == null) {
-            log.warn("Name not found at " + toHex(id.longValue()));
-            return "unresolved name " + toHex(id.longValue());
-        }
-        return result;
+        log.warn("Unexpected EOF. Will miss information...");
+        // we have EOF, we have to tolerate missing references
+        snapshot.setUnresolvedObjectsOK(true);
     }
 
-    private ThreadObject getThreadObjectFromSequence(int threadSeq)
-            throws IOException {
-        ThreadObject to = threadObjects.get(new Integer(threadSeq));
-        if (to == null) {
-            throw new NprofilerException("Thread " + threadSeq +
-                    " not found for JNI local ref");
-        }
-        return to;
+    private void warn(String msg) {
+        System.out.println("WARNING: " + msg);
     }
 
-    private StackTrace getStackTraceFromSerial(int ser) throws IOException {
-        if (stackTraces == null) {
-            return null;
-        }
-        StackTrace result = stackTraces.get(new Integer(ser));
-        if (result == null) {
-            log.warn("Stack trace not found for serial # " + ser);
-        }
-        return result;
-    }
-
+    //
+    // A trivial data-holder class for HPROF_GC_ROOT_THREAD_OBJ.
+    //
     private class ThreadObject {
 
         long threadId;
