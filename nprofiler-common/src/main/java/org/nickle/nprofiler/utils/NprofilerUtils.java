@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 @Slf4j
 public class NprofilerUtils {
+
     public static void mapToObj(Map map, Object obj, Function mapValueResolve) {
         if (map == null || obj == null) {
             return;
@@ -52,4 +53,5 @@ public class NprofilerUtils {
     @Target(ElementType.FIELD)
     public @interface MapToObjIgnore {
     }
+
 }
