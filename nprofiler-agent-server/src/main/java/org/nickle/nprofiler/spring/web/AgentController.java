@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static org.nickle.nprofiler.constant.CommonConstant.JMAP_HEAP_INFO_MAPPING;
-import static org.nickle.nprofiler.constant.CommonConstant.JPS_PROCESS_INFO_MAPPING;
-import static org.nickle.nprofiler.constant.CommonConstant.JSTAT_GC_INFO_MAPPING;
+import static org.nickle.nprofiler.constant.CommonConstant.*;
 
 @RestController
 @Validated
 public class AgentController {
+
     @Autowired
     private IJmapService jmapService;
     @Autowired
     private IJavaProcessService javaProcessService;
     @Autowired
     private IJstatService jstatService;
+
 
     @GetMapping(JMAP_HEAP_INFO_MAPPING + "/{processId}")
     public JmapHeapInfo getJmapHeapInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
@@ -43,5 +43,6 @@ public class AgentController {
     public JstatGCInfo getJstatGCInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
         return jstatService.getGCSummary(processId);
     }
+
 
 }

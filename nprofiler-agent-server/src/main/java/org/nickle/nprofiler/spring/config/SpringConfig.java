@@ -33,6 +33,7 @@ public class SpringConfig {
         return new DefaultJstatServiceImpl();
     }
 
+
     @Bean
     public IRegistryClient registryClient() {
         DefaultHttpRegistryClient defaultHttpRegistryClient = new DefaultHttpRegistryClient();
