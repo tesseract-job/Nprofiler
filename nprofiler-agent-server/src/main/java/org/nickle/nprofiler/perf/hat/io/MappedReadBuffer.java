@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.perf.io;
+package org.nickle.nprofiler.perf.hat.io;
 
 import com.sun.tools.hat.internal.parser.ReadBuffer;
 import lombok.extern.slf4j.Slf4j;

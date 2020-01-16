@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.perf.io;
+package org.nickle.nprofiler.perf.hat.io;
 
 import com.sun.tools.hat.internal.model.*;
 import com.sun.tools.hat.internal.parser.PositionDataInputStream;
@@ -9,11 +9,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 
 ;
 
 /**
+ * 读取.hprof文件
  * @author wesley
  * @create 2020-01-14
  */
@@ -26,9 +27,9 @@ public class HprofReader extends Reader implements ArrayTypeCodes {
             " PROFILE 1.0.1\0",
             " PROFILE 1.0.2\0",
     };
-    private final static int VERSION_JDK12BETA3 = 0;
-    private final static int VERSION_JDK12BETA4 = 1;
-    private final static int VERSION_JDK6       = 2;
+    private static final int VERSION_JDK12BETA3 = 0;
+    private static final int VERSION_JDK12BETA4 = 1;
+    private static final int VERSION_JDK6       = 2;
     static final int HPROF_UTF8          = 0x01;
     static final int HPROF_LOAD_CLASS    = 0x02;
     static final int HPROF_UNLOAD_CLASS  = 0x03;
@@ -58,19 +59,19 @@ public class HprofReader extends Reader implements ArrayTypeCodes {
     static final int HPROF_GC_PRIM_ARRAY_DUMP         = 0x23;
     static final int HPROF_HEAP_DUMP_SEGMENT     = 0x1c;
     static final int HPROF_HEAP_DUMP_END         = 0x2c;
-    private final static int T_CLASS = 2;
+    private static final int T_CLASS = 2;
     private int version;
     private int debugLevel;
     private long currPos;
     private int dumpsToSkip;
     private boolean callStack;
     private int identifierSize;
-    private Hashtable<Long, String> names;
-    private Hashtable<Integer, ThreadObject> threadObjects;
-    private Hashtable<Long, String> classNameFromObjectID;
-    private Hashtable<Integer, String> classNameFromSerialNo;
-    private Hashtable<Long, StackFrame> stackFrames;
-    private Hashtable<Integer, StackTrace> stackTraces;
+    private ConcurrentHashMap<Long, String> names;
+    private ConcurrentHashMap<Integer, ThreadObject> threadObjects;
+    private ConcurrentHashMap<Long, String> classNameFromObjectID;
+    private ConcurrentHashMap<Integer, String> classNameFromSerialNo;
+    private ConcurrentHashMap<Long, StackFrame> stackFrames;
+    private ConcurrentHashMap<Integer, StackTrace> stackTraces;
     private Snapshot snapshot;
     public HprofReader(String fileName, PositionDataInputStream in,
                        int dumpNumber, boolean callStack, int debugLevel)
@@ -81,13 +82,13 @@ public class HprofReader extends Reader implements ArrayTypeCodes {
         this.dumpsToSkip = dumpNumber - 1;
         this.callStack = callStack;
         this.debugLevel = debugLevel;
-        names = new Hashtable<>();
-        threadObjects = new Hashtable<>(43);
-        classNameFromObjectID = new Hashtable<>();
+        names = new ConcurrentHashMap<>();
+        threadObjects = new ConcurrentHashMap<>(43);
+        classNameFromObjectID = new ConcurrentHashMap<>();
         if (callStack) {
-            stackFrames = new Hashtable<>(43);
-            stackTraces = new Hashtable<>(43);
-            classNameFromSerialNo = new Hashtable<>();
+            stackFrames = new ConcurrentHashMap<>(43);
+            stackTraces = new ConcurrentHashMap<>(43);
+            classNameFromSerialNo = new ConcurrentHashMap<>();
         }
     }
 
