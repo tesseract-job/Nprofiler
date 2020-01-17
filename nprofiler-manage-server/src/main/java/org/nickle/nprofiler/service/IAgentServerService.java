@@ -4,6 +4,7 @@ import feign.Param;
 import feign.RequestLine;
 import org.nickle.nprofiler.bean.JmapHeapInfo;
 import org.nickle.nprofiler.bean.JpsProcessInfo;
+import org.nickle.nprofiler.bean.JstatGCInfo;
 
 import java.util.List;
 
@@ -16,4 +17,7 @@ public interface IAgentServerService {
 
     @RequestLine("GET " + JPS_PROCESS_INFO_MAPPING)
     List<JpsProcessInfo> getJpsProcessInfo();
+
+    @RequestLine("GET " + JSTAT_GC_INFO_MAPPING+ "/{processId}")
+    JstatGCInfo getJstatGCInfo(@Param("processId") String processId);
 }

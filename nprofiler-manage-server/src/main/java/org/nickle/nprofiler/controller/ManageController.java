@@ -1,9 +1,6 @@
 package org.nickle.nprofiler.controller;
 
-import org.nickle.nprofiler.bean.AgentInfo;
-import org.nickle.nprofiler.bean.CommonResponse;
-import org.nickle.nprofiler.bean.JmapHeapInfo;
-import org.nickle.nprofiler.bean.JpsProcessInfo;
+import org.nickle.nprofiler.bean.*;
 import org.nickle.nprofiler.registry.IAgentRegistry;
 import org.nickle.nprofiler.service.IAgentServerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,12 @@ public class ManageController {
     public JmapHeapInfo getJmapHeapInfo(@NotBlank @PathVariable("id") String id, @NotBlank @PathVariable("processId") String processId) throws Exception {
         IAgentServerService agentService = iAgentRegistry.getAgentService(id);
         return agentService.getJmapHeapInfo(processId);
+    }
+
+    @GetMapping("/gcInfo/{id}/{processId}")
+    public JstatGCInfo getJstatGCInfoo(@NotBlank @PathVariable("id") String id, @NotBlank @PathVariable("processId") String processId) throws Exception {
+        IAgentServerService agentService = iAgentRegistry.getAgentService(id);
+        return agentService.getJstatGCInfo(processId);
     }
 
     @PostMapping(AGENT_REGIST_MAPPING)
