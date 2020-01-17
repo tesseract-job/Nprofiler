@@ -1,9 +1,11 @@
 package org.nickle.nprofiler.spring.web;
 
+import org.nickle.nprofiler.bean.JinfoConfiguration;
 import org.nickle.nprofiler.bean.JmapHeapInfo;
 import org.nickle.nprofiler.bean.JpsProcessInfo;
 import org.nickle.nprofiler.bean.JstatGCInfo;
 import org.nickle.nprofiler.perf.service.IJavaProcessService;
+import org.nickle.nprofiler.perf.service.IJinfoService;
 import org.nickle.nprofiler.perf.service.IJmapService;
 import org.nickle.nprofiler.perf.service.IJstatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import static org.nickle.nprofiler.constant.CommonConstant.*;
 
-import static org.nickle.nprofiler.constant.CommonConstant.JMAP_HEAP_INFO_MAPPING;
-import static org.nickle.nprofiler.constant.CommonConstant.JPS_PROCESS_INFO_MAPPING;
-import static org.nickle.nprofiler.constant.CommonConstant.JSTAT_GC_INFO_MAPPING;
 
 @RestController
 @Validated
@@ -29,9 +29,17 @@ public class AgentController {
     @Autowired
     private IJstatService jstatService;
 
+    @Autowired
+    private IJinfoService jinfoService;
+
     @GetMapping(JMAP_HEAP_INFO_MAPPING + "/{processId}")
     public JmapHeapInfo getJmapHeapInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
         return jmapService.getProcessHeapSummary(processId);
+    }
+
+    @GetMapping(JMAP_HEAP_INFO_MAPPING + "/{processId}")
+    public JmapHeapInfo getJInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
+        return null;
     }
 
     @GetMapping(JPS_PROCESS_INFO_MAPPING)
@@ -39,9 +47,15 @@ public class AgentController {
         return javaProcessService.getAllJavaProcess();
     }
 
+
     @GetMapping(JSTAT_GC_INFO_MAPPING+ "/{processId}")
     public JstatGCInfo getJstatGCInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
         return jstatService.getGCSummary(processId);
+    }
+
+    @GetMapping(JINFO_CONFIGURATION_MAPPING + "/{processId}")
+    public JinfoConfiguration getJinfoConfiguration(@PathVariable("processId") @NotNull Integer processId) throws Exception {
+        return jinfoService.getInfoConfiguration(processId);
     }
 
 }
