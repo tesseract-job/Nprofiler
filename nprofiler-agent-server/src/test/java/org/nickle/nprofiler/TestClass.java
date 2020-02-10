@@ -34,4 +34,12 @@ public class TestClass {
         System.out.println(JSON.toJSON(processHeapSummary));
     }
 
+    @Test
+    public void testJhat() throws Exception {
+        com.sun.tools.hat.Main.main(new String[]{"-stack false","-Xmx512M","C:\\Users\\zero\\Desktop\\公司\\test.log"});
+        while (true){
+            Thread.sleep(2000);
+        }
+    }
+
 }

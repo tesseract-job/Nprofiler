@@ -1,11 +1,9 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.JavaClass;
-import com.sun.tools.hat.internal.model.JavaHeapObject;
-import com.sun.tools.hat.internal.model.JavaThing;
-import com.sun.tools.hat.internal.model.Snapshot;
+import com.sun.tools.hat.internal.model.*;
 import com.sun.tools.hat.internal.util.Misc;
 import org.nickle.nprofiler.bean.InstanceInfo;
+import org.nickle.nprofiler.bean.RootsInfo;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -49,8 +47,8 @@ public abstract class NQueryHandler {
     }
 
 
-    protected String encodeForURL(JavaClass var1) {
-        return var1.getId() == -1L ? this.encodeForURL(var1.getName()) : var1.getIdString();
+    protected String encodeForURL(JavaClass javaClass) {
+        return javaClass.getId() == -1L ? this.encodeForURL(javaClass.getName()) : javaClass.getIdString();
     }
 
 
@@ -58,7 +56,7 @@ public abstract class NQueryHandler {
         return Misc.parseHex(var1);
     }
 
-    protected String parseLink(long var1) {
+    protected String parseThingLink(long var1) {
         return "object/"+ this.parseHex(var1);
     }
 
@@ -82,13 +80,13 @@ public abstract class NQueryHandler {
             if (var1 instanceof JavaHeapObject) {
                 InstanceInfo instanceInfo = new InstanceInfo();
                 JavaHeapObject var2 = (JavaHeapObject)var1;
-                long var3 = var2.getId();
-                if (var3 != -1L) {
+                long id = var2.getId();
+                if (id != -1L) {
                     if (var2.isNew()) {
                         instanceInfo.setNewFlag((byte)1);
                     }
-                    instanceInfo.setObjectLink(parseLink(var3));
-                    instanceInfo.setBytesCount((long)var2.getSize());
+                    instanceInfo.setId(id);
+                    instanceInfo.setByteSize((long)var2.getSize());
                 }
                 instanceInfo.setObjectName(var1.toString());
                 return instanceInfo;
@@ -98,6 +96,25 @@ public abstract class NQueryHandler {
 
         }
     }
+
+
+    protected RootsInfo.RootInfo parseRoot(Root var1) {
+        RootsInfo.RootInfo rootInfo = new RootsInfo.RootInfo();
+        StackTrace var2 = var1.getStackTrace();
+        boolean var3 = var2 != null && var2.getFrames().length != 0;
+        if (var3) {
+            // String rootStackLink = parseRootStackLink((long) var1.getIndex());
+            // rootInfo.setRootStackLink(rootStackLink);
+            rootInfo.setRootStackId((long) var1.getIndex());
+        }
+        rootInfo.setDescription(var1.getDescription());
+        return rootInfo;
+    }
+
+    protected String parseRootStackLink(long var1){
+        return "rootStack/"+ this.parseHex(var1);
+    }
+
 
 
 }

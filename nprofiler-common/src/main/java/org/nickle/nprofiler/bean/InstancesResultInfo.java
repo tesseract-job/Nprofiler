@@ -13,10 +13,11 @@ import java.util.List;
 @Data
 public class InstancesResultInfo {
 
+    private Long id;
     private Byte includeSubclasses;
     private Byte newObjects;
-    private String classLink;
+    private String className;
     private List<InstanceInfo> instanceInfos;
-    private Long bytesCount;
+    private Long byteSize;
     private Long instancesCount;
 }

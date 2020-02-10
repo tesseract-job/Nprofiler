@@ -10,13 +10,14 @@ import lombok.Data;
  */
 @Data
 public  class InstanceInfo {
-    /** [Ljava.lang.Class;@0x6c253f9e0 (24 bytes) */
+    private Long id;
     private Byte newFlag;
     private String objectName;
-    private String objectLink;
-    private Long bytesCount;
+    private Long byteSize;
     /** 无法解析的对象描述 */
     private String unSolvableDesc;
+    /** 引用描述 */
+    private String referenceToDesc;
 
     public InstanceInfo(){}
 

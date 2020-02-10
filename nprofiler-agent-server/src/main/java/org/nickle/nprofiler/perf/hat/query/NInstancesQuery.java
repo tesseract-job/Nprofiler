@@ -45,7 +45,10 @@ public class NInstancesQuery extends NQueryHandler{
         if (javaClass == null) {
             throw new NprofilerException("请求的类找不到");
         } else {
-            info.setClassLink(this.urlStart+"class/"+this.encodeForURL(javaClass));
+            info.setId(javaClass.getId());
+            // 类名
+            info.setClassName(javaClass.getName());
+
             Enumeration var3 = javaClass.getInstances(this.includeSubclasses);
 
             long var4 = 0L;
@@ -65,7 +68,7 @@ public class NInstancesQuery extends NQueryHandler{
                 var4 += (long)var8.getSize();
                 ++var6;
             }
-            info.setBytesCount(var4);
+            info.setByteSize(var4);
             info.setInstancesCount(var6);
             info.setInstanceInfos(list);
         }
