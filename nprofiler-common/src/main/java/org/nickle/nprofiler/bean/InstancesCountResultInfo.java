@@ -1,6 +1,7 @@
 package org.nickle.nprofiler.bean;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 public class InstancesCountResultInfo {
 
-    /** 是否排平台类 */
+    /** 是否排除平台类 */
     private Byte excludePlatform;
     /** 实例数统计 */
     private Long instancesCount;
@@ -23,18 +24,14 @@ public class InstancesCountResultInfo {
     private List<InstancesCountInfo> instancesCountInfoList;
 
     @Data
-    public static class InstancesCountInfo{
+    @NoArgsConstructor
+    public class InstancesCountInfo{
+        private Long id;
         /** 包含实例数 */
         private Long instancesCount;
-        private String instancesName;
-        private String instancesLink;
-
         private Byte hasNewSet;
         private Long newInstancesCount;
-        private String newInstancesName;
-        private String newInstancesLink;
         /** 类名 */
         private String className;
-        private String classLink;
     }
 }

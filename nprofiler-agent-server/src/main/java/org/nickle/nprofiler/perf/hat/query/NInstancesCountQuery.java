@@ -30,23 +30,23 @@ public class NInstancesCountQuery extends  NQueryHandler{
         // 1. excludePlatform
         InstancesCountResultInfo resultInfo = new InstancesCountResultInfo();
         // 查找类
-        JavaClass[] var1 = this.snapshot.getClassesArray();
+        JavaClass[] classes = this.snapshot.getClassesArray();
         if (this.excludePlatform) {
             resultInfo.setExcludePlatform((byte)1);
-            int var2 = 0;
-            for(int var3 = 0; var3 < var1.length; ++var3) {
-                if (!PlatformClasses.isPlatformClass(var1[var3])) {
-                    var1[var2++] = var1[var3];
+            int index = 0;
+            for(int var3 = 0; var3 < classes.length; ++var3) {
+                if (!PlatformClasses.isPlatformClass(classes[var3])) {
+                    classes[index++] = classes[var3];
                 }
             }
 
-            JavaClass[] var14 = new JavaClass[var2];
-            System.arraycopy(var1, 0, var14, 0, var14.length);
-            var1 = var14;
+            JavaClass[] var14 = new JavaClass[index];
+            System.arraycopy(classes, 0, var14, 0, var14.length);
+            classes = var14;
         }
 
         // sort order by desc
-        ArraySorter.sort(var1, new Comparer() {
+        ArraySorter.sort(classes, new Comparer() {
             @Override
             public int compare(Object var1, Object var2) {
                 JavaClass var3 = (JavaClass)var1;
@@ -70,22 +70,15 @@ public class NInstancesCountQuery extends  NQueryHandler{
         long bytesTotal = 0L;
         long instancesTotal = 0L;
 
-        List<InstancesCountResultInfo.InstancesCountInfo> list = new ArrayList<>(var1.length);
+        List<InstancesCountResultInfo.InstancesCountInfo> list = new ArrayList<>(classes.length);
 
-        for(int var7 = 0; var7 < var1.length; ++var7) {
-            InstancesCountResultInfo.InstancesCountInfo info = new InstancesCountResultInfo.InstancesCountInfo();
-            JavaClass var8 = var1[var7];
+        for(int var7 = 0; var7 < classes.length; ++var7) {
+            InstancesCountResultInfo.InstancesCountInfo info = new InstancesCountResultInfo().new InstancesCountInfo();
+            JavaClass var8 = classes[var7];
             // count
             int instancesCount = var8.getInstancesCount(false);
             info.setInstancesCount((long)instancesCount);
-            info.setInstancesLink(this.urlStart+"instances/" + this.encodeForURL(var1[var7]));
-
-            if (instancesCount == 1) {
-                info.setInstancesName("instance");
-            } else {
-                info.setInstancesName("instances");
-            }
-
+            info.setId(classes[var7].getId());
             if (this.snapshot.getHasNewSet()) {
                 info.setHasNewSet((byte)1);
                 Enumeration var10 = var8.getInstances(false);
@@ -98,15 +91,11 @@ public class NInstancesCountQuery extends  NQueryHandler{
                     }
                 }
                 info.setNewInstancesCount((long)var11);
-                info.setNewInstancesLink(this.urlStart+"newInstances/" + this.encodeForURL(var1[var7]));
-                info.setNewInstancesName("newInstances");
             }
 
-            info.setClassName(var1[var7] == null ? "null":var1[var7].toString());
-            info.setClassLink(this.urlStart+"class/"+this.encodeForURL(var1[var7]));
-
+            info.setClassName(classes[var7] == null ? "null":classes[var7].toString());
             instancesTotal += (long)instancesCount;
-            bytesTotal += var1[var7].getTotalInstanceSize();
+            bytesTotal += classes[var7].getTotalInstanceSize();
             list.add(info);
         }
 
