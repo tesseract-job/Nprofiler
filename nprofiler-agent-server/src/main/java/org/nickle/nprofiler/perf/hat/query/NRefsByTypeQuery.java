@@ -40,9 +40,12 @@ public class NRefsByTypeQuery extends NQueryHandler{
                         RefsByTypeInfo.JavaClass javaClass = result.new JavaClass();
                         javaClass.setId(var1.getId());
                         javaClass.setName(var1.getName());
+                        result.setRefByClass(javaClass);
                         // 排序
                         sortMap(referrersMap);
                         sortMap(refereesMap);
+                        result.setReferrersMap(referrersMap);
+                        result.setRefereesMap(refereesMap);
                         return result;
                     }
                     var5 = (JavaHeapObject)var4.nextElement();
