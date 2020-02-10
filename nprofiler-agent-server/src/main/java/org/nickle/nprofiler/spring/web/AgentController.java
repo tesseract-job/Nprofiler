@@ -71,4 +71,10 @@ public class AgentController {
         return jhatService.storeRootsInfo("F:\\444.hprof");
     }
 
+    @GetMapping(JHAT_DUMP_INFO_MAPPING+"/RefsByTypeInfo")
+    public List<RefsByTypeInfo> getRefsByTypeInfo() throws IOException {
+        return jhatService.storeRefsByTypeInfo("F:\\444.hprof");
+    }
+
+
 }

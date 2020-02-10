@@ -36,4 +36,9 @@ public class DataBaseStoreDumpInfo implements IStoreDumpInfo{
     public List<RootsInfo> storeRootsInfo(Snapshot snapshot, AllClassesInfo allClassesInfo) {
         return null;
     }
+
+    @Override
+    public List<RefsByTypeInfo> storeRefsByTypeInfo(Snapshot snapshot, AllClassesInfo allClassesInfo) {
+        return null;
+    }
 }
