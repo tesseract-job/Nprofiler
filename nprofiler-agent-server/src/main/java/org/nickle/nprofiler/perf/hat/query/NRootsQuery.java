@@ -21,15 +21,14 @@ import java.util.List;
  */
 public class NRootsQuery extends NQueryHandler{
     private boolean includeWeak;
-    private long id;
 
-    public NRootsQuery(boolean var1,long id) {
+    public NRootsQuery(boolean var1) {
         this.includeWeak = var1;
-        this.id = id;
     }
 
     @Override
     public Object run() {
+        long id = parseHex(query);
         JavaHeapObject heapObject = this.snapshot.findThing(id);
         if (heapObject == null) {
             throw new NprofilerException("无法站找到根集合");
