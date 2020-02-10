@@ -23,7 +23,7 @@ public class NAllClassesQuery extends NQueryHandler{
 
 
     @Override
-    Object run() {
+    public Object run() {
         AllClassesInfo allClassesInfo = new AllClassesInfo();
         Iterator classes = snapshot.getClasses();
         Map<String,List<AllClassesInfo.JavaClass>> info = new HashMap<>();

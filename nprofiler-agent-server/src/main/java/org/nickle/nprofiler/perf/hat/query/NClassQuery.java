@@ -8,6 +8,9 @@ import com.sun.tools.hat.internal.util.Comparer;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.bean.ClassInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * class详细信息查询接口
  * @author wesley
@@ -16,18 +19,21 @@ import org.nickle.nprofiler.bean.ClassInfo;
 @Slf4j
 public class NClassQuery extends NQueryHandler {
 
-    public NClassQuery() {
+    public NClassQuery(String query) {
+        this.query = query;
     }
 
     @Override
-    Object run() {
+    public Object run() {
         JavaClass clazz = snapshot.findClass(query);
         ClassInfo classInfo = new ClassInfo();
+        List<ClassInfo.JavaField> fields = classInfo.getFields();
+        fields = new ArrayList<>();
         if (clazz == null) {
             log.error("class not found: " + query);
         } else {
             classInfo.setName(clazz.toString());
-            classInfo.setSuperclass(clazz.getSuperclass().toString());
+            /*classInfo.setSuperclass(clazz.getSuperclass().toString());*/
             classInfo.setLoader(clazz.getLoader().toString());
             classInfo.setSigners(clazz.getSigners().toString());
             classInfo.setProtectionDomain(clazz.getProtectionDomain().toString());
@@ -47,7 +53,7 @@ public class NClassQuery extends NQueryHandler {
                 ClassInfo.JavaField  javaField = classInfo.new JavaField();
                 javaField.setName(ff[i].getName());
                 javaField.setSignature(ff[i].getSignature());
-                classInfo.getFields().add(javaField);
+                fields.add(javaField);
             }
 
             JavaStatic[] ss = clazz.getStatics();

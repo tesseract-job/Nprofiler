@@ -3,8 +3,10 @@ package org.nickle.nprofiler.perf.hat.query;
 import com.sun.tools.hat.internal.model.JavaClass;
 import org.nickle.nprofiler.bean.HistogramInfo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * class概要查询接口
@@ -13,18 +15,21 @@ import java.util.Comparator;
  */
 public class NHistogramQuery extends NQueryHandler {
 
+    public NHistogramQuery() {
+    }
+
     @Override
-    Object run() {
-        HistogramInfo info = new HistogramInfo();
+    public Object run() {
+        List<HistogramInfo> list = new ArrayList<>();
         JavaClass[] classes = snapshot.getClassesArray();
         Comparator<JavaClass> comparator;
-        if (query.equals("count")) {
+        if ("count".equals(query)) {
             comparator = (first, second) -> {
                 long diff = (second.getInstancesCount(false) -
                         first.getInstancesCount(false));
                 return (diff == 0)? 0: ((diff < 0)? -1 : + 1);
             };
-        } else if (query.equals("class")) {
+        } else if ("class".equals(query)) {
             comparator = (first, second) -> first.getName().compareTo(second.getName());
         } else {
             // default sort is by total size
@@ -37,11 +42,12 @@ public class NHistogramQuery extends NQueryHandler {
         Arrays.sort(classes, comparator);
         for (int i = 0; i < classes.length; i++) {
             JavaClass clazz = classes[i];
+            HistogramInfo info = new HistogramInfo();
             info.setClassName(clazz.toString());
-            info.setCount(clazz.getInstancesCount(false));
+            info.setCount(clazz.getInstancesCount(true));
             info.setSize(clazz.getTotalInstanceSize());
-
+            list.add(info);
         }
-        return info;
+        return list;
     }
 }

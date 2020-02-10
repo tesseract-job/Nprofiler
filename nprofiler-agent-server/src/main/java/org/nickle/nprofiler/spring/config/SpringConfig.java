@@ -1,11 +1,13 @@
 package org.nickle.nprofiler.spring.config;
 
 import org.nickle.nprofiler.perf.service.IJavaProcessService;
+import org.nickle.nprofiler.perf.service.IJhatService;
 import org.nickle.nprofiler.perf.service.IJmapService;
 import org.nickle.nprofiler.perf.service.IJstatService;
 import org.nickle.nprofiler.perf.service.impl.DefaultJavaProcessServiceImpl;
 import org.nickle.nprofiler.perf.service.impl.DefaultJmapServiceImpl;
 import org.nickle.nprofiler.perf.service.impl.DefaultJstatServiceImpl;
+import org.nickle.nprofiler.perf.service.impl.MemoryJhatSerivceImpl;
 import org.nickle.nprofiler.registry.DefaultHttpRegistryClient;
 import org.nickle.nprofiler.registry.IRegistryClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,11 @@ public class SpringConfig {
     @Bean
     public IJstatService jstatService() {
         return new DefaultJstatServiceImpl();
+    }
+
+    @Bean
+    public IJhatService jhatService() {
+        return new MemoryJhatSerivceImpl();
     }
 
 

@@ -5,5 +5,6 @@ public class CommonConstant {
     public static final String JPS_PROCESS_INFO_MAPPING = "/jpsProcessInfo";
     public static final String JSTAT_GC_INFO_MAPPING = "/jstatGCInfo";
     public static final String AGENT_REGIST_MAPPING = "/agent";
+    public static final String JHAT_DUMP_INFO_MAPPING = "/jhatDumpInfo";
     public static final String AGENT_HEART_BEAT_MAPPING = AGENT_REGIST_MAPPING;
 }
