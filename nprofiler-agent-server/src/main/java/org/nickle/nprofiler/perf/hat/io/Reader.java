@@ -24,6 +24,13 @@ public abstract class Reader {
     abstract public Snapshot read() throws IOException;
 
     public static Snapshot readFile(String heapFile, boolean callStack,
+                                    int debugLevel,boolean calculateRefs) throws IOException {
+        Snapshot snapshot = readFile(heapFile, callStack, debugLevel);
+        snapshot.resolve(calculateRefs);
+        return snapshot;
+    }
+
+    private static Snapshot readFile(String heapFile, boolean callStack,
                                     int debugLevel)
             throws IOException {
         int dumpNumber = 1;
