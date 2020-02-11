@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.perf.hat.io;
+package org.nickle.nprofiler.perf.hat.io.read;
 
 import org.nickle.nprofiler.perf.hat.model.Snapshot;
 import lombok.extern.slf4j.Slf4j;

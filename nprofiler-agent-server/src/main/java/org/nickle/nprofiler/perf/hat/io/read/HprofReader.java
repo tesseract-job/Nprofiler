@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.perf.hat.io;
+package org.nickle.nprofiler.perf.hat.io.read;
 
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.exception.NprofilerException;

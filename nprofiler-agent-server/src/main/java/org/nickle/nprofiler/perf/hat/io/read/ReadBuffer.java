@@ -30,35 +30,21 @@
  * at JavaSoft/Sun.
  */
 
-package org.nickle.nprofiler.perf.hat.io;
-
-import java.io.DataInputStream;
-import java.io.InputStream;
+package org.nickle.nprofiler.perf.hat.io.read;
+import java.io.IOException;
 
 /**
- * A DataInputStream that keeps track of total bytes read
- * (in effect 'position' in stream) so far.
+ * Positionable read only buffer
  *
+ * @author A. Sundararajan
  */
-public class PositionDataInputStream extends DataInputStream {
-    public PositionDataInputStream(InputStream in) {
-        super(in instanceof PositionInputStream ?
-              in : new PositionInputStream(in));
-    }
-
-    public boolean markSupported() {
-        return false;
-    }
-
-    public void mark(int readLimit) {
-        throw new UnsupportedOperationException("mark");
-    }
-
-    public void reset() {
-        throw new UnsupportedOperationException("reset");
-    }
-
-    public long position() {
-        return ((PositionInputStream)in).position();
-    }
+public interface ReadBuffer {
+    // read methods - only byte array and int primitive types.
+    // read position has to be specified always.
+    public void  get(long pos, byte[] buf) throws IOException;
+    public char  getChar(long pos) throws IOException;
+    public byte  getByte(long pos) throws IOException;
+    public short getShort(long pos) throws IOException;
+    public int   getInt(long pos) throws IOException;
+    public long  getLong(long pos) throws IOException;
 }

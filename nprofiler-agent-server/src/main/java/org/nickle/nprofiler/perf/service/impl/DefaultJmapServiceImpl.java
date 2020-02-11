@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.bean.JmapHeapInfo;
 import org.nickle.nprofiler.exception.NprofilerException;
+import org.nickle.nprofiler.perf.hat.io.write.HeapHprofBinWriter;
 import org.nickle.nprofiler.perf.service.IJmapService;
 import org.nickle.nprofiler.utils.NprofilerUtils;
 import sun.jvm.hotspot.gc_implementation.g1.G1CollectedHeap;
@@ -29,6 +30,12 @@ public class DefaultJmapServiceImpl  implements IJmapService {
         HeapSummary heapSummary = new HeapSummary();
         heapSummary.exec(new String[]{String.valueOf(processId)});
         return heapSummary.getJmapHeapInfo();
+    }
+
+    @Override
+    public void writeHeapHprofBin(String fileName) throws Exception {
+        HeapHprofBinWriter hbw = new HeapHprofBinWriter();
+        hbw.write(fileName);
     }
 
     @Data

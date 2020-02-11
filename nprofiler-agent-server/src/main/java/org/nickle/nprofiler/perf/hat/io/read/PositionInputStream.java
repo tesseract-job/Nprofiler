@@ -30,7 +30,7 @@
  * at JavaSoft/Sun.
  */
 
-package org.nickle.nprofiler.perf.hat.io;
+package org.nickle.nprofiler.perf.hat.io.read;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;

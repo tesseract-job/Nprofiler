@@ -1,4 +1,4 @@
-package org.nickle.nprofiler.perf.hat.io;
+package org.nickle.nprofiler.perf.hat.io.read;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

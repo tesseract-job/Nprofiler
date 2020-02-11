@@ -9,7 +9,7 @@ import lombok.Data;
  * @date: 2020年01月16 20时51分
  */
 @Data
-public  class InstanceInfo {
+public class InstanceInfo {
     private Long id;
     private Byte newFlag;
     private String objectName;
