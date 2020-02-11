@@ -34,7 +34,7 @@ package org.nickle.nprofiler.perf.hat.model;
 
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.exception.NprofilerException;
-import org.nickle.nprofiler.perf.hat.io.ReadBuffer;
+import org.nickle.nprofiler.perf.hat.io.read.ReadBuffer;
 import java.io.IOException;
 
 /**

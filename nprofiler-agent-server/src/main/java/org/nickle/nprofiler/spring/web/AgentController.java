@@ -35,6 +35,10 @@ public class AgentController {
     public JmapHeapInfo getJmapHeapInfo(@PathVariable("processId") @NotNull Integer processId) throws Exception {
         return jmapService.getProcessHeapSummary(processId);
     }
+    @GetMapping(JMAP_HEAP_INFO_MAPPING + "/createDuump")
+    public void createDump(@NotNull String fileName) throws Exception {
+        jmapService.writeHeapHprofBin(fileName);
+    }
 
     @GetMapping(JPS_PROCESS_INFO_MAPPING)
     public List<JpsProcessInfo> getJpsProcessInfo() throws Exception {
@@ -47,33 +51,43 @@ public class AgentController {
     }
 
     @GetMapping(JHAT_DUMP_INFO_MAPPING+"/allClassesInfo")
-    public AllClassesInfo getAllClassesInfo() throws IOException {
-        return jhatService.storeAllClassesInfo("F:\\444.hprof");
+    public AllClassesInfo getAllClassesInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeAllClassesInfo(fileName);
     }
 
     @GetMapping(JHAT_DUMP_INFO_MAPPING+"/classInfo")
-    public List<ClassInfo> getClassInfo() throws IOException {
-        return jhatService.storeClassInfo("F:\\444.hprof");
+    public List<ClassInfo> getClassInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeClassInfo(fileName);
     }
 
     @GetMapping(JHAT_DUMP_INFO_MAPPING+"/histogramInfo")
-    public List<HistogramInfo> getHistogramInfo() throws IOException {
-        return jhatService.storeHistogramInfo("F:\\444.hprof");
+    public List<HistogramInfo> getHistogramInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeHistogramInfo(fileName);
     }
 
     @GetMapping(JHAT_DUMP_INFO_MAPPING+"/instancesCountResultInfo")
-    public InstancesCountResultInfo getInstancesCountResultInfo() throws IOException {
-        return jhatService.storeInstancesCountResultInfo("F:\\444.hprof");
+    public InstancesCountResultInfo getInstancesCountResultInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeInstancesCountResultInfo(fileName);
     }
 
     @GetMapping(JHAT_DUMP_INFO_MAPPING+"/rootsInfo")
-    public List<RootsInfo> getRootsInfo() throws IOException {
-        return jhatService.storeRootsInfo("F:\\444.hprof");
+    public List<RootsInfo> getRootsInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeRootsInfo(fileName);
     }
 
-    @GetMapping(JHAT_DUMP_INFO_MAPPING+"/RefsByTypeInfo")
-    public List<RefsByTypeInfo> getRefsByTypeInfo() throws IOException {
-        return jhatService.storeRefsByTypeInfo("F:\\444.hprof");
+    @GetMapping(JHAT_DUMP_INFO_MAPPING+"/refsByTypeInfo")
+    public List<RefsByTypeInfo> getRefsByTypeInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeRefsByTypeInfo(fileName);
+    }
+
+    @GetMapping(JHAT_DUMP_INFO_MAPPING+"/reachableInfo")
+    public List<ReachableInfo> getReachableInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeReachableInfo(fileName);
+    }
+
+    @GetMapping(JHAT_DUMP_INFO_MAPPING+"/instanceInfo")
+    public List<InstancesResultInfo> getInstanceInfo(@NotNull String fileName) throws IOException {
+        return jhatService.storeInstanceInfo(fileName);
     }
 
 

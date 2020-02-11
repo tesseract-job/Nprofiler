@@ -41,4 +41,14 @@ public class DataBaseStoreDumpInfo implements IStoreDumpInfo{
     public List<RefsByTypeInfo> storeRefsByTypeInfo(Snapshot snapshot, AllClassesInfo allClassesInfo) {
         return null;
     }
+
+    @Override
+    public List<ReachableInfo> storeReachableInfo(Snapshot snapshot, AllClassesInfo allClassesInfo) {
+        return null;
+    }
+
+    @Override
+    public List<InstancesResultInfo> storeInstanceInfo(Snapshot snapshot, AllClassesInfo allClassesInfo) {
+        return null;
+    }
 }

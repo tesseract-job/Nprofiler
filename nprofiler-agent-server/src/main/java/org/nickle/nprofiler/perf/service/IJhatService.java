@@ -18,5 +18,7 @@ public interface IJhatService {
     InstancesCountResultInfo storeInstancesCountResultInfo(String filename) throws IOException;
     List<RootsInfo> storeRootsInfo(String filename) throws IOException;
     List<RefsByTypeInfo> storeRefsByTypeInfo(String filename) throws IOException;
+    List<ReachableInfo> storeReachableInfo(String filename) throws IOException;
+    List<InstancesResultInfo> storeInstanceInfo(String filename) throws IOException;
 
 }

@@ -3,7 +3,7 @@ package org.nickle.nprofiler.perf.service.impl;
 import org.nickle.nprofiler.perf.hat.model.Snapshot;
 import lombok.Data;
 import org.nickle.nprofiler.bean.*;
-import org.nickle.nprofiler.perf.hat.io.Reader;
+import org.nickle.nprofiler.perf.hat.io.read.Reader;
 import org.nickle.nprofiler.perf.hat.query.NQueryHandler;
 import org.nickle.nprofiler.perf.hat.store.MemoryStoreDumpInfo;
 import org.nickle.nprofiler.perf.service.IJhatService;
@@ -70,6 +70,24 @@ public class MemoryJhatSerivceImpl implements IJhatService {
         MemoryStoreDumpInfo info = new MemoryStoreDumpInfo();
         AllClassesInfo allClassesInfo = info.storeAllClassesInfo(snapshot);
         return dumpInfo.storeRefsByTypeInfo(snapshot,allClassesInfo);
+    }
+
+    @Override
+    public List<ReachableInfo> storeReachableInfo(String filename) throws IOException {
+        snapshot = Reader.readFile(filename,true,1,true);
+        dumpInfo = new MemoryStoreDumpInfo();
+        MemoryStoreDumpInfo info = new MemoryStoreDumpInfo();
+        AllClassesInfo allClassesInfo = info.storeAllClassesInfo(snapshot);
+        return dumpInfo.storeReachableInfo(snapshot,allClassesInfo);
+    }
+
+    @Override
+    public List<InstancesResultInfo> storeInstanceInfo(String filename) throws IOException {
+        snapshot = Reader.readFile(filename,true,1,true);
+        dumpInfo = new MemoryStoreDumpInfo();
+        MemoryStoreDumpInfo info = new MemoryStoreDumpInfo();
+        AllClassesInfo allClassesInfo = info.storeAllClassesInfo(snapshot);
+        return dumpInfo.storeInstanceInfo(snapshot,allClassesInfo);
     }
 
 }

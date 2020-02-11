@@ -98,4 +98,44 @@ public class MemoryStoreDumpInfo implements IStoreDumpInfo {
         return list;
     }
 
+    @Override
+    public List<ReachableInfo> storeReachableInfo(Snapshot snapshot, AllClassesInfo allClassesInfo) {
+        List<ReachableInfo> list = new ArrayList<>();
+        Map<String, List<AllClassesInfo.JavaClass>> info = allClassesInfo.getInfo();
+        Collection<List<AllClassesInfo.JavaClass>> values = info.values();
+        Iterator<List<AllClassesInfo.JavaClass>> iterator = values.iterator();
+        while (iterator.hasNext()){
+            List<AllClassesInfo.JavaClass> next = iterator.next();
+            for (int i = 0; i < next.size() ; i++) {
+                AllClassesInfo.JavaClass javaClass = next.get(i);
+                queryHandler = new NReachableQuery();
+                queryHandler.setQuery("0x"+Long.toHexString(javaClass.getId()));
+                queryHandler.setSnapshot(snapshot);
+                list.add((ReachableInfo) queryHandler.run());
+            }
+
+        }
+        return list;
+    }
+
+    @Override
+    public List<InstancesResultInfo> storeInstanceInfo(Snapshot snapshot, AllClassesInfo allClassesInfo) {
+        List<InstancesResultInfo> list = new ArrayList<>();
+        Map<String, List<AllClassesInfo.JavaClass>> info = allClassesInfo.getInfo();
+        Collection<List<AllClassesInfo.JavaClass>> values = info.values();
+        Iterator<List<AllClassesInfo.JavaClass>> iterator = values.iterator();
+        while (iterator.hasNext()){
+            List<AllClassesInfo.JavaClass> next = iterator.next();
+            for (int i = 0; i < next.size() ; i++) {
+                AllClassesInfo.JavaClass javaClass = next.get(i);
+                queryHandler = new NInstancesQuery(true,true);
+                queryHandler.setQuery("0x"+Long.toHexString(javaClass.getId()));
+                queryHandler.setSnapshot(snapshot);
+                list.add((InstancesResultInfo) queryHandler.run());
+            }
+
+        }
+        return list;
+    }
+
 }

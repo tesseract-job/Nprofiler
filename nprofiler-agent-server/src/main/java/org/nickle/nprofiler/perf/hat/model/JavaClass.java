@@ -32,7 +32,7 @@
 
 package org.nickle.nprofiler.perf.hat.model;
 
-import org.nickle.nprofiler.perf.hat.io.ReadBuffer;
+import org.nickle.nprofiler.perf.hat.io.read.ReadBuffer;
 import org.nickle.nprofiler.perf.hat.util.CompositeEnumeration;
 
 import java.util.Enumeration;
