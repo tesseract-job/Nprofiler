@@ -1,8 +1,9 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.AbstractJavaHeapObjectVisitor;
-import com.sun.tools.hat.internal.model.JavaClass;
-import com.sun.tools.hat.internal.model.JavaHeapObject;
+import org.nickle.nprofiler.perf.hat.model.AbstractJavaHeapObjectVisitor;
+import org.nickle.nprofiler.perf.hat.model.JavaClass;
+import org.nickle.nprofiler.perf.hat.model.JavaField;
+import org.nickle.nprofiler.perf.hat.model.JavaHeapObject;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.bean.RefsByTypeInfo;
 import org.nickle.nprofiler.exception.NprofilerException;
@@ -86,6 +87,11 @@ public class NRefsByTypeQuery extends NQueryHandler{
                             var3x = new Long(var3x + 1L);
                         }
                         refereesMap.put(javaClass, var3x);
+                    }
+
+                    @Override
+                    public boolean exclude(JavaClass clazz, JavaField f) {
+                        return false;
                     }
                 });
             }

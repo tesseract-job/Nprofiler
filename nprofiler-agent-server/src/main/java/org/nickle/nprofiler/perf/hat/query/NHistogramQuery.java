@@ -1,6 +1,6 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.JavaClass;
+import org.nickle.nprofiler.perf.hat.model.JavaClass;
 import org.nickle.nprofiler.bean.HistogramInfo;
 
 import java.util.ArrayList;

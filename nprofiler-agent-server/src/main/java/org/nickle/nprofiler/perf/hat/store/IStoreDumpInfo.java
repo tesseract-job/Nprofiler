@@ -1,6 +1,6 @@
 package org.nickle.nprofiler.perf.hat.store;
 
-import com.sun.tools.hat.internal.model.Snapshot;
+import org.nickle.nprofiler.perf.hat.model.Snapshot;
 import org.nickle.nprofiler.bean.*;
 
 import java.util.List;

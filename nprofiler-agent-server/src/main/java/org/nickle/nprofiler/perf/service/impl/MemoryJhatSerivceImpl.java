@@ -1,6 +1,6 @@
 package org.nickle.nprofiler.perf.service.impl;
 
-import com.sun.tools.hat.internal.model.Snapshot;
+import org.nickle.nprofiler.perf.hat.model.Snapshot;
 import lombok.Data;
 import org.nickle.nprofiler.bean.*;
 import org.nickle.nprofiler.perf.hat.io.Reader;

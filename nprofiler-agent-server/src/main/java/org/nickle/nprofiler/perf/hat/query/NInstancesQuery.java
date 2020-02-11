@@ -1,7 +1,7 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.JavaClass;
-import com.sun.tools.hat.internal.model.JavaHeapObject;
+import org.nickle.nprofiler.perf.hat.model.JavaClass;
+import org.nickle.nprofiler.perf.hat.model.JavaHeapObject;
 import org.nickle.nprofiler.bean.InstanceInfo;
 import org.nickle.nprofiler.bean.InstancesResultInfo;
 import org.nickle.nprofiler.exception.NprofilerException;

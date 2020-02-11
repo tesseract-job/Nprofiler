@@ -1,7 +1,6 @@
 package org.nickle.nprofiler.perf.hat.io;
 
-import com.sun.tools.hat.internal.model.Snapshot;
-import com.sun.tools.hat.internal.parser.PositionDataInputStream;
+import org.nickle.nprofiler.perf.hat.model.Snapshot;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.exception.NprofilerException;
 

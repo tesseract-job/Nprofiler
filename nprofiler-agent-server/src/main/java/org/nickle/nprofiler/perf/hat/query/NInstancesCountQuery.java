@@ -1,11 +1,10 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.JavaClass;
-import com.sun.tools.hat.internal.model.JavaHeapObject;
-import com.sun.tools.hat.internal.server.PlatformClasses;
-import com.sun.tools.hat.internal.util.ArraySorter;
-import com.sun.tools.hat.internal.util.Comparer;
 import org.nickle.nprofiler.bean.InstancesCountResultInfo;
+import org.nickle.nprofiler.perf.hat.model.JavaClass;
+import org.nickle.nprofiler.perf.hat.model.JavaHeapObject;
+import org.nickle.nprofiler.perf.hat.util.ArraySorter;
+import org.nickle.nprofiler.perf.hat.util.Comparer;
 
 import java.util.ArrayList;
 import java.util.Enumeration;

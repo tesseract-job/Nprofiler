@@ -1,8 +1,8 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.JavaHeapObject;
-import com.sun.tools.hat.internal.model.JavaThing;
-import com.sun.tools.hat.internal.model.ReachableObjects;
+import org.nickle.nprofiler.perf.hat.model.JavaHeapObject;
+import org.nickle.nprofiler.perf.hat.model.JavaThing;
+import org.nickle.nprofiler.perf.hat.model.ReachableObjects;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.bean.InstanceInfo;
 import org.nickle.nprofiler.bean.ReachableInfo;

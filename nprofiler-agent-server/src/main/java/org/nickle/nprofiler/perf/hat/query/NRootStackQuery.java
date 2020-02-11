@@ -1,7 +1,7 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.Root;
-import com.sun.tools.hat.internal.model.StackTrace;
+import org.nickle.nprofiler.perf.hat.model.Root;
+import org.nickle.nprofiler.perf.hat.model.StackTrace;
 import org.nickle.nprofiler.bean.RootStackInfo;
 import org.nickle.nprofiler.exception.NprofilerException;
 
@@ -26,7 +26,7 @@ public class NRootStackQuery extends NQueryHandler{
             StackTrace stackTrace = root.getStackTrace();
             RootStackInfo rootStackInfo = new RootStackInfo();
             if (stackTrace != null && stackTrace.getFrames().length != 0) {
-                rootStackInfo.setFrames(stackTrace.getFrames());
+//                rootStackInfo.setFrames(stackTrace.getFrames());
             } else {
                 throw new NprofilerException(String.format("找不到{%s}的调用栈",root.getDescription()));
             }

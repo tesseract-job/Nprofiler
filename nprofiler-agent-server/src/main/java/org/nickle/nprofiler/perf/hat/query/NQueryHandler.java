@@ -1,7 +1,7 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.*;
-import com.sun.tools.hat.internal.util.Misc;
+import org.nickle.nprofiler.perf.hat.model.*;
+import org.nickle.nprofiler.perf.hat.util.Misc;
 import org.nickle.nprofiler.bean.InstanceInfo;
 import org.nickle.nprofiler.bean.RootsInfo;
 

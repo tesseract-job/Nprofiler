@@ -1,6 +1,6 @@
 package org.nickle.nprofiler.perf.hat.store;
 
-import com.sun.tools.hat.internal.model.Snapshot;
+import org.nickle.nprofiler.perf.hat.model.Snapshot;
 import lombok.Data;
 import org.nickle.nprofiler.bean.*;
 import org.nickle.nprofiler.perf.hat.query.*;
@@ -68,9 +68,8 @@ public class MemoryStoreDumpInfo implements IStoreDumpInfo {
             List<AllClassesInfo.JavaClass> next = iterator.next();
             for (int i = 0; i < next.size() ; i++) {
                 AllClassesInfo.JavaClass javaClass = next.get(i);
-                queryHandler = new NRootsQuery(true);
+                queryHandler = new NRootsQuery(true,javaClass.getId());
                 queryHandler.setQuery("0x"+Long.toHexString(javaClass.getId()));
-                System.out.println("0x"+Long.toHexString(javaClass.getId()));
                 queryHandler.setSnapshot(snapshot);
                 list.add((RootsInfo) queryHandler.run());
             }

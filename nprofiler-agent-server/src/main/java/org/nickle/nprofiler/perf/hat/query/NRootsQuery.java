@@ -1,10 +1,10 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.JavaHeapObject;
-import com.sun.tools.hat.internal.model.ReferenceChain;
-import com.sun.tools.hat.internal.model.Root;
-import com.sun.tools.hat.internal.util.ArraySorter;
-import com.sun.tools.hat.internal.util.Comparer;
+import org.nickle.nprofiler.perf.hat.model.JavaHeapObject;
+import org.nickle.nprofiler.perf.hat.model.ReferenceChain;
+import org.nickle.nprofiler.perf.hat.model.Root;
+import org.nickle.nprofiler.perf.hat.util.ArraySorter;
+import org.nickle.nprofiler.perf.hat.util.Comparer;
 import org.nickle.nprofiler.bean.InstanceInfo;
 import org.nickle.nprofiler.bean.RootsInfo;
 import org.nickle.nprofiler.exception.NprofilerException;
@@ -21,14 +21,15 @@ import java.util.List;
  */
 public class NRootsQuery extends NQueryHandler{
     private boolean includeWeak;
+    private long id;
 
-    public NRootsQuery(boolean var1) {
+    public NRootsQuery(boolean var1,long id) {
         this.includeWeak = var1;
+        this.id = id;
     }
 
     @Override
     public Object run() {
-        long id = parseHex(query);
         JavaHeapObject heapObject = this.snapshot.findThing(id);
         if (heapObject == null) {
             throw new NprofilerException("无法站找到根集合");

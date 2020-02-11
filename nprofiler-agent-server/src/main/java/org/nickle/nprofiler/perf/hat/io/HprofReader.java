@@ -1,9 +1,8 @@
 package org.nickle.nprofiler.perf.hat.io;
 
-import com.sun.tools.hat.internal.model.*;
-import com.sun.tools.hat.internal.parser.PositionDataInputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.nickle.nprofiler.exception.NprofilerException;
+import org.nickle.nprofiler.perf.hat.model.*;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -639,7 +638,7 @@ public class HprofReader extends Reader implements ArrayTypeCodes {
     }
 
     private String toHex(long addr) {
-        return com.sun.tools.hat.internal.util.Misc.toHex(addr);
+        return org.nickle.nprofiler.perf.hat.util.Misc.toHex(addr);
     }
 
     //

@@ -1,8 +1,8 @@
 package org.nickle.nprofiler.perf.hat.query;
 
-import com.sun.tools.hat.internal.model.JavaClass;
-import com.sun.tools.hat.internal.server.PlatformClasses;
+
 import org.nickle.nprofiler.bean.AllClassesInfo;
+import org.nickle.nprofiler.perf.hat.model.JavaClass;
 
 import java.util.*;
 
